@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Firebase
 
 class GameViewController: UIViewController {
 
@@ -31,6 +32,8 @@ class GameViewController: UIViewController {
     
     // 0 -> ソロプレイ 1 -> マルチプレイ
     var gamemode = 0
+    
+    var roomId:String?
     
     var timer:Timer?
     
@@ -58,19 +61,84 @@ class GameViewController: UIViewController {
     
     lazy var quiz:Quiz = quizzes[0]
     
+    let db = Firestore.firestore()
+    
+    var roomRef:DocumentReference?
+    
+    var isFirstPlayer:Bool = false
+    
+    var fresults:[Int] = []
+    
+    var sresults:[Int] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        // Do any additional setup after loading the view.
+        
+        sleep(1)
         if gamemode == 0 {
             secondPlayerNameLabel?.text = ""
             secondPlayerColonLabel?.text = ""
             secondPlayerAnswerLabel?.text = ""
+            setup()
+        }else{
+            roomRef = db.collection("rooms").document(roomId!)
+            updateDatas()
+            setup()
         }
-        // Do any additional setup after loading the view.
-        setup()
+    }
+
+    func updateDatas(){
+        var firstPlayerName:String?
+        var secondPlayerName:String?
+        var firstPlayerId:String?
+        var secondPlayerId:String?
+        var firstPlayerAnswer:String = ""
+        var secondPlayerAnswer:String = ""
+        roomRef?.getDocument(completion: { (documentSnapshot, error) in
+            firstPlayerId = documentSnapshot?.get("firstPlayerId") as? String
+            secondPlayerId = documentSnapshot?.get("secondPlayerId") as? String
+            
+            self.fresults = documentSnapshot?.get("fresults") as! Array
+            
+            self.sresults = documentSnapshot?.get("sresults") as! Array
+            
+            self.db.collection("users").document(firstPlayerId!).getDocument(completion:{ (documentSnapshot, error) in
+                firstPlayerName = documentSnapshot?.get("name") as? String
+                self.firstPlayerNameLabel?.text = firstPlayerName ?? "いがりょう"
+            })
+            
+            self.db.collection("users").document(secondPlayerId!).getDocument(completion:{ (documentSnapshot, error) in
+                secondPlayerName = documentSnapshot?.get("name") as? String
+                self.secondPlayerNameLabel?.text = secondPlayerName ?? "いがりょう"
+            })
+            
+            for x in self.fresults{
+                if x == -1{
+                    firstPlayerAnswer += "□"
+                }else if x == 0{
+                    firstPlayerAnswer += "X"
+                }else{
+                    firstPlayerAnswer += "O"
+                }
+            }
+            for x in self.sresults{
+                if x == -1{
+                    secondPlayerAnswer += "□"
+                }else if x == 0{
+                    secondPlayerAnswer += "X"
+                }else{
+                    secondPlayerAnswer += "O"
+                }
+            }
+            self.firstPlayerAnswerLabel?.text = firstPlayerAnswer
+            self.secondPlayerAnswerLabel?.text = secondPlayerAnswer
+        })
     }
     
     func setup(){
+        print("setup")
         letterNum = 0
         okImage?.isHidden = true
         ngImage?.isHidden = true
@@ -120,6 +188,9 @@ class GameViewController: UIViewController {
     }
     
     func nextLetter(){
+        if gamemode == 1{
+            updateDatas()
+        }
         var answerText = ""
         for x in 0 ..< quiz.answerLength{
             if x <= letterNum {
@@ -157,23 +228,66 @@ class GameViewController: UIViewController {
     
     func correct(){
         okImage?.isHidden = false
+        if isFirstPlayer{
+            fresults[quizNum] = 1
+        }else{
+            sresults[quizNum] = 1
+        }
         next()
     }
     
     func incorrect(){
         ngImage?.isHidden = false
+        if isFirstPlayer{
+            fresults[quizNum] = 0
+        }else{
+            sresults[quizNum] = 0
+        }
         next()
     }
     
     func next(){
         timer?.invalidate()
         isWaiting = true
+        if gamemode == 1{
+            var listener:ListenerRegistration! = nil
+            listener = roomRef?.addSnapshotListener{(documentSnapshot,error) in
+                if self.isFirstPlayer{
+                    if (documentSnapshot?.get("sisWaiting") as! Bool) {
+                        print("ok")
+                        self.checkQuizNum()
+                        listener.remove()
+                        self.roomRef?.updateData(["sisWaiting":false])
+                    }
+                }else{
+                    if  (documentSnapshot?.get("fisWaiting") as! Bool){
+                        print("ok")
+                        self.checkQuizNum()
+                        listener.remove()
+                        self.roomRef?.updateData(["fisWaiting":false])
+                    }
+                }
+                
+            }
+            if isFirstPlayer {
+                roomRef?.updateData(["fisWaiting":true,"fresults":fresults])
+            }else{
+                roomRef?.updateData(["sisWaiting":true, "sresults":sresults])
+            }
+        }else{
+            checkQuizNum()
+        }
+        
+    }
+    
+    func checkQuizNum(){
         if maxQuizNum > quizNum+1{
             Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(nextQuiz), userInfo: nil, repeats: false)
+            print("next")
         }else{
             self.performSegue(withIdentifier: "toResult", sender: nil)
+            print("toResult")
         }
-        print("next")
     }
     
     @objc func nextQuiz(){
@@ -182,7 +296,10 @@ class GameViewController: UIViewController {
         quiz = quizzes[quizNum]
         setup()
     }
-
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        timer?.invalidate()
+    }
     /*
     // MARK: - Navigation
 

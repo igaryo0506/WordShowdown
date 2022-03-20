@@ -1,22 +1,32 @@
 //
-//  ResultViewController.swift
+//  ProfileViewController.swift
 //  WordShowdown
 //
-//  Created by 五十嵐諒 on 2022/03/17.
+//  Created by 五十嵐諒 on 2022/03/18.
 //
 
 import UIKit
+import Firebase
 
-class ResultViewController: UIViewController {
-
+class ProfileViewController: UIViewController {
+    
+    @IBOutlet var textField:UITextField?
+    
+    let db = Firestore.firestore()
+    var uid : String?
+    var id : String?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Do any additional setup after loading the view.
+        uid = UserDefaults.standard.string(forKey: "uid")
     }
     
+    @IBAction func clickedChangeNameButton(){
+        db.collection("users").document(uid!).updateData(["name": self.textField?.text ?? ""])
+    }
     
-
     /*
     // MARK: - Navigation
 
