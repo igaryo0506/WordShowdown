@@ -43,23 +43,11 @@ class GameViewController: UIViewController {
     
     var tempAlphabets:[String] = []
     
-    let alphabets:[String] = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
+    let alphabets:[String] = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
     
     var isWaiting = false
     
     var letterNum = 0
-    
-    let maxQuizNum = 5
-    
-    var quizNum = 0
-    
-    var quizzes:[Quiz] = [Quiz(question:"こんにちは", answer: "HELLO"),
-                        Quiz(question: "放棄する", answer: "ABANDON"),
-                        Quiz(question: "プログラミング", answer: "PROGRAMMING"),
-                        Quiz(question: "卓球", answer: "TABLETENNIS"),
-                        Quiz(question: "踊る", answer: "DANCE")]
-    
-    lazy var quiz:Quiz = quizzes[0]
     
     let db = Firestore.firestore()
     
@@ -71,12 +59,16 @@ class GameViewController: UIViewController {
     
     var sresults:[Int] = []
     
+    var game = Game()
+    
+    lazy var quiz:Quiz = game.quizzes[0]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        
         sleep(1)
+        
         if gamemode == 0 {
             secondPlayerNameLabel?.text = ""
             secondPlayerColonLabel?.text = ""
@@ -156,6 +148,9 @@ class GameViewController: UIViewController {
     }
     
     @objc func timerUpdate(){
+        if (game.quizNum >= game.maxQuizNum){
+            return
+        }
         leftTime -= 0.05
         progressView?.setProgress(Float(leftTime / maxTime), animated: true)
         if(leftTime < 0){
@@ -227,22 +222,25 @@ class GameViewController: UIViewController {
     }
     
     func correct(){
-        okImage?.isHidden = false
-        if isFirstPlayer{
-            fresults[quizNum] = 1
-        }else{
-            sresults[quizNum] = 1
+        if gamemode == 1{
+            if isFirstPlayer{
+                fresults[game.quizNum] = 1
+            }else{
+                sresults[game.quizNum] = 1
+            }
         }
         next()
     }
     
     func incorrect(){
-        ngImage?.isHidden = false
-        if isFirstPlayer{
-            fresults[quizNum] = 0
-        }else{
-            sresults[quizNum] = 0
+        if gamemode == 1{
+            if isFirstPlayer{
+                fresults[game.quizNum] = 0
+            }else{
+                sresults[game.quizNum] = 0
+            }
         }
+        
         next()
     }
     
@@ -281,8 +279,11 @@ class GameViewController: UIViewController {
     }
     
     func checkQuizNum(){
-        if maxQuizNum > quizNum+1{
-            Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(nextQuiz), userInfo: nil, repeats: false)
+        if game.maxQuizNum > game.quizNum+1{
+            invalidateButton()
+            sleep(1)
+            validateButton()
+            nextQuiz()
             print("next")
         }else{
             self.performSegue(withIdentifier: "toResult", sender: nil)
@@ -290,14 +291,29 @@ class GameViewController: UIViewController {
         }
     }
     
-    @objc func nextQuiz(){
+    func invalidateButton(){
+        button0?.isEnabled = false
+        button1?.isEnabled = false
+        button2?.isEnabled = false
+        button3?.isEnabled = false
+    }
+    
+    func validateButton(){
+        button0?.isEnabled = true
+        button1?.isEnabled = true
+        button2?.isEnabled = true
+        button3?.isEnabled = true
+    }
+    
+    func nextQuiz(){
         isWaiting = false
-        quizNum += 1
-        quiz = quizzes[quizNum]
+        game.quizNum += 1
+        quiz = game.quizzes[game.quizNum]
         setup()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        print("finish")
         timer?.invalidate()
     }
     /*

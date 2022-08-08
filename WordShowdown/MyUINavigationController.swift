@@ -13,7 +13,6 @@ class MyUINavigationController: UINavigationController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        navigationBar.backgroundColor = UIColor{_ in return #colorLiteral(red: 0, green: 0.7262094617, blue: 0.6250674725, alpha: 1)}
         navigationBar.tintColor = UIColor.white
         navigationBar.titleTextAttributes = [
             .foregroundColor: UIColor.white

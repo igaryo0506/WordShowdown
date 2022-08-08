@@ -22,6 +22,11 @@
 		C5CA62CA27E15D520016554A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C5CA62C927E15D520016554A /* Assets.xcassets */; };
 		C5CA62CD27E15D520016554A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C5CA62CB27E15D520016554A /* LaunchScreen.storyboard */; };
 		C5CA62D527E15E7B0016554A /* TitleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5CA62D427E15E7B0016554A /* TitleViewController.swift */; };
+		DD2502A628A0F1BF0032CB49 /* QuizList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2502A528A0F1BF0032CB49 /* QuizList.swift */; };
+		DD2502A828A0FA530032CB49 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2502A728A0FA530032CB49 /* Game.swift */; };
+		DDA4B23B28A09CDC009F011A /* FirebaseUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA4B23A28A09CDC009F011A /* FirebaseUtils.swift */; };
+		DDA4B23D28A09DA6009F011A /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA4B23C28A09DA6009F011A /* Utils.swift */; };
+		DDA4B23F28A0AA3A009F011A /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA4B23E28A0AA3A009F011A /* Room.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +46,11 @@
 		C5CA62CC27E15D520016554A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C5CA62CE27E15D520016554A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C5CA62D427E15E7B0016554A /* TitleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleViewController.swift; sourceTree = "<group>"; };
+		DD2502A528A0F1BF0032CB49 /* QuizList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = QuizList.swift; path = WordShowdown/QuizList.swift; sourceTree = SOURCE_ROOT; };
+		DD2502A728A0FA530032CB49 /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
+		DDA4B23A28A09CDC009F011A /* FirebaseUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseUtils.swift; sourceTree = "<group>"; };
+		DDA4B23C28A09DA6009F011A /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		DDA4B23E28A0AA3A009F011A /* Room.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Room.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,23 +84,44 @@
 		C5CA62BF27E15D4E0016554A /* WordShowdown */ = {
 			isa = PBXGroup;
 			children = (
-				C5693B0427E16E8A00532B9D /* Quiz.swift */,
+				DDA4B24028A0AA49009F011A /* model */,
+				DD2502A228A0D6A00032CB49 /* ViewController */,
 				C5CA62C027E15D4E0016554A /* AppDelegate.swift */,
 				C5CA62C227E15D4E0016554A /* SceneDelegate.swift */,
-				C5CA62D427E15E7B0016554A /* TitleViewController.swift */,
-				C58936BC27E3751B0088C178 /* ResultViewController.swift */,
-				C5693B0227E16E1200532B9D /* GameViewController.swift */,
-				C561250827E49A490027133B /* ProfileViewController.swift */,
+				DD2502A528A0F1BF0032CB49 /* QuizList.swift */,
+				C5693B0627E1707800532B9D /* MyUINavigationController.swift */,
 				C5CA62C627E15D4E0016554A /* Main.storyboard */,
 				C5CA62C927E15D520016554A /* Assets.xcassets */,
 				C5CA62CB27E15D520016554A /* LaunchScreen.storyboard */,
 				C5CA62CE27E15D520016554A /* Info.plist */,
-				C5693B0627E1707800532B9D /* MyUINavigationController.swift */,
 				C5693B0827E1F56900532B9D /* ng.png */,
 				C5693B0927E1F56900532B9D /* ok.png */,
 				C561250A27E4A9280027133B /* GoogleService-Info.plist */,
+				DDA4B23A28A09CDC009F011A /* FirebaseUtils.swift */,
+				DDA4B23C28A09DA6009F011A /* Utils.swift */,
 			);
 			path = WordShowdown;
+			sourceTree = "<group>";
+		};
+		DD2502A228A0D6A00032CB49 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				C5CA62D427E15E7B0016554A /* TitleViewController.swift */,
+				C58936BC27E3751B0088C178 /* ResultViewController.swift */,
+				C5693B0227E16E1200532B9D /* GameViewController.swift */,
+				C561250827E49A490027133B /* ProfileViewController.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		DDA4B24028A0AA49009F011A /* model */ = {
+			isa = PBXGroup;
+			children = (
+				C5693B0427E16E8A00532B9D /* Quiz.swift */,
+				DDA4B23E28A0AA3A009F011A /* Room.swift */,
+				DD2502A728A0FA530032CB49 /* Game.swift */,
+			);
+			path = model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -173,14 +204,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DDA4B23B28A09CDC009F011A /* FirebaseUtils.swift in Sources */,
 				C5693B0727E1707800532B9D /* MyUINavigationController.swift in Sources */,
+				DD2502A628A0F1BF0032CB49 /* QuizList.swift in Sources */,
+				DD2502A828A0FA530032CB49 /* Game.swift in Sources */,
 				C5693B0327E16E1200532B9D /* GameViewController.swift in Sources */,
 				C58936BD27E3751B0088C178 /* ResultViewController.swift in Sources */,
 				C5693B0527E16E8A00532B9D /* Quiz.swift in Sources */,
+				DDA4B23D28A09DA6009F011A /* Utils.swift in Sources */,
 				C5CA62D527E15E7B0016554A /* TitleViewController.swift in Sources */,
 				C5CA62C127E15D4E0016554A /* AppDelegate.swift in Sources */,
 				C561250927E49A490027133B /* ProfileViewController.swift in Sources */,
 				C5CA62C327E15D4E0016554A /* SceneDelegate.swift in Sources */,
+				DDA4B23F28A0AA3A009F011A /* Room.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
